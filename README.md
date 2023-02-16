@@ -1,7 +1,6 @@
 # EM_calculations
 
-This is the basic code that I initially drafted for my first journal paper titled, "Country level governance and earnings management: new evidence from North-European countries".
-which was published in International Journal of Work Innovation in 2022. 
+This is the basic code that I initially drafted for my first journal paper titled, "Country level governance and earnings management: new evidence from North-European countries" which was published in International Journal of Work Innovation in 2022. 
 
 The code attempts to calculate the level of Earnings Management by using proxies such as Jones Model(1995) absolute discretionary accruals and Kothari Model(2005).
 
