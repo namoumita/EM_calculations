@@ -1,6 +1,6 @@
  ***H1: Firm Earnings Management is related to country governance in NORTH EUROPEAN COUNTRIES***
 
-***Import Command Nafisa***
+***Import Command namoumita***
 . import excel "C:\Users\HP\Downloads\DB Europe 3.4.2021.xlsx", sheet("STATA DB") firstrow
 
 
@@ -9,13 +9,6 @@
 
 . set more off
 
-*** REMOVAL FROM THE DATA SET OBSERVATIONS FROM NON EUROPEAN COUNTRIES ***
-. drop if CountryofHeadquarters=="Bermuda"
-. drop if CountryofHeadquarters=="Faroe Islands"
-. drop if CountryofHeadquarters=="Mexico"
-. drop if CountryofHeadquarters=="Singapore"
-. drop if CountryofHeadquarters=="United States"
-. drop if CountryofHeadquarters=="Russia"
 
 *** REMOVAL FROM THE DATA SET OBSERVATIONS FROM NON NORTH EUROPEAN COUNTRIES***
 . drop if CountryofHeadquarters=="Bulgaria"
@@ -29,101 +22,10 @@
 . drop if CountryofHeadquarters=="Spain"
 . drop if CountryofHeadquarters=="Switzerland"
 
-***REMOVAL OF COUNTRIES WITH NO OUTPUT FROM THE DATASET***
-. drop if CountryofHeadquarters=="Austria"
-. drop if CountryofHeadquarters=="Iceland"
-
 
 *** REMOVAL FROM THE DATA SET FINANCIAL COMPANIES LIKE BANKS (WE JUST WANT TO WORK WITH NON-FINANCIAL FIRMS)***
 . drop if GICSSectorCode==40
 . drop if TRBCEconomicSector=="Financials"
-
-*** LABLE VARIABLES WITH MISSING LABLES ***
-. label variable region "WB region"
-
-. label variable incomegr "WB Income Group"
-
-. label variable dbacba "Deposits Money Bank Assets to (Deposit + Central) Bank Assets"
-
-. label variable llgdp "Liquid Liabilities to GDP (%)"
-
-. label variable cbagdp "Central Bank Assets to GDP (%)"
-
-. label variable dbagdp "Deposit Money Bank Assets to GDP (%)"
-
-. label variable ofagdp "Other Financial Institions Assets to GDP (%)"
-
-. label variable pcrdbgdp "Private Credit by Depoist Moeny Banks to GDP (%)"
-
-. label variable pcrdbofgdp "Private Credit by Deposit Money Banks and Other Financial Instituions to GDP (%)"
-
-. label variable bdgdp "Bank Deposits to GDP (%)"
-
-. label variable fdgdp "Financial Systems Deposit to GDP (%)"
-
-. label variable bcbd "Bank Credit to Bank Deposits (%)"
-
-. label variable ll_usd "Liquid Liabilities (in Mil. 2010 USD)"
-
-. label variable overhead "Bank Overhead Costs to Toal Assets (%)"
-
-. label variable netintmargin "Net Interest Margin (%)"
-
-. label variable concentration "Bank Concentration (%)"
-
-. label variable roa "Bank ROA"
-
-. label variable roe "Bank ROE"
-
-. label variable costinc "Bank Cost to Income Ratio (%)"
-
-. label variable zscore "Bank Z-Score"
-
-. label variable inslife "Life Insurance Premium Volume to GDP (%)"
-
-. label variable insnonlife "Non-Life Insurance Premium Volume to GDP (%)"
-
-. label variable stmktcap "Stock Market Capitalization to GDP (%)"
-
-. label variable stvaltraded "Stock Market Total Value Traded to GDP (%)"
-
-. label variable stturnover "Stock Market Turnover Ratio (%)"
-
-. label variable listco_pc "No of Listed Companies per 10k Population"
-
-. label variable prbond "Private Bond Market Capitalization to GDP (%)"
-
-. label variable pubond "Private Bond Market Capitalization to GDP (%)"
-
-. label variable pubond "Public Bond Market Capitalization to GDP (%)"
-
-. label variable intldebt "International Debt Issues to GDP (%)"
-
-. label variable intldebtnet "Loans from Non-Resident Banks (Net) to GDP (%)"
-
-. label variable nrbloan "Loans from Non-Resident Banks"
-
-. label variable nrbloan "Loans from Non-Resident Banks (AMT Outstanding) to GDP (%) "
-
-. label variable offdep "Offshore Bank Deposits to Domestic Bank"
-
-. label variable offdep "Offshore Bank Deposits to Domestic Bank Deposits (%)"
-
-. label variable remit "Remitance Inflows to GDP (%)"
-
-. label variable VA "Voice and Accountability"
-
-. label variable PS "Political Stability or No-Violence"
-
-. label variable GE "Government Effectivenes"
-
-. label variable RQ "Regulatory Quality"
-
-. label variable RL "Rule of Law"
-
-. label variable CC "Control of Corruption"
-
-. label variable GGG "Global Gender Gap Index"
 
 
 ***COMPUTATION OF CONTROL VARIABLES***
@@ -143,7 +45,6 @@
 . histogram size, normal
 
 . generate lev1 = TotalDebt / TotalAssetsReported if TotalEquity>0
-  ***TotalDebt / TotalAssetsReported if TotalEquity>0
 . label variable lev1 "Leverage" 
 . swilk lev1
 . histogram lev1, normal
@@ -306,7 +207,6 @@
 . hettest
 ****higher ch(2) value = Heteroskedastic so the null hypothesis of homoskedasticity is rejected. 
 . estat imtest, white
-**I have checked both the tests and both of them seems to work
 . whitetst
 
 ***HAUSMAN***
@@ -326,239 +226,11 @@
 
 
 ***REGRESSION MODEL*** 
-***MAIN MODELS FOR ROBUSTNESS COMPARISON***
-
-
-
-***OLS-FE***
-***** DEPENDENT VARIABLE ABS_DA(Absolute Discretionary Accruals) Using Modified Jones Model 1995***
-
-. xtreg ABS_DA CGI lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, replace label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA CGI ROA_w2 lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA CGI ROA_w2 TAT lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA CGI ROA_w2 TAT JudicialEffectiveness lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA CGI ROA_w2 TAT JudicialEffectiveness TaxBurden lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA CGI ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA CGI ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA CGI ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA CGI ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA CGI ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI Individualismindex i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA CGI ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI Individualismindex powerdistanceindex i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-
-
-
-
-. xtreg ABS_DA factorcgi1 lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi1 ROA_w2 lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi1 ROA_w2 TAT lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi1 ROA_w2 TAT JudicialEffectiveness lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi1 ROA_w2 TAT JudicialEffectiveness TaxBurden lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi1 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi1 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi1 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi1 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi1 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI Individualismindex i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi1 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI Individualismindex powerdistanceindex i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-
-
-. xtreg ABS_DA factorcgi2 lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi2 ROA_w2 lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi2 ROA_w2 TAT lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi2 ROA_w2 TAT JudicialEffectiveness lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi2 ROA_w2 TAT JudicialEffectiveness TaxBurden lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi2 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi2 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi2 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi2 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi2 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI Individualismindex i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg ABS_DA factorcgi2 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI Individualismindex powerdistanceindex i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-
-
-
-
-***** DEPENDENT VARIABLE EM2_w2(Earnings Management proxy) Using kothari Model 2005***
-
-. xtreg EM2_w2 CGI lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 CGI ROA_w2 lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 CGI ROA_w2 TAT lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 CGI ROA_w2 TAT JudicialEffectiveness lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 CGI ROA_w2 TAT JudicialEffectiveness TaxBurden lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 CGI ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 CGI ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 CGI ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 CGI ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 CGI ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI Individualismindex i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 CGI ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI Individualismindex powerdistanceindex i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-
-
-. xtreg EM2_w2 factorcgi1 lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi1 ROA_w2 lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi1 ROA_w2 TAT lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi1 ROA_w2 TAT JudicialEffectiveness lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi1 ROA_w2 TAT JudicialEffectiveness TaxBurden lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi1 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi1 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi1 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi1 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi1 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI Individualismindex i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi1 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI Individualismindex powerdistanceindex i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-
-
-. xtreg EM2_w2 factorcgi2 lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi2 ROA_w2 lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi2 ROA_w2 TAT lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi2 ROA_w2 TAT JudicialEffectiveness lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi2 ROA_w2 TAT JudicialEffectiveness TaxBurden lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi2 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi2 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi2 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi2 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI i.c i.gicsin, fe
-outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi2 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI Individualismindex i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-. xtreg EM2_w2 factorcgi2 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI Individualismindex powerdistanceindex i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
-
-. xtreg EM2_w2 factorcgi2 ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI Individualismindex powerdistanceindex i.c i.gicsin, fe
-. outreg2 using outputFE1.xls, append label ctitle(EM2) addstat(Sigma_u, e(sigma_u), Sigma_e, e(sigma_e), Adj-R^2, e(r2_a), F-test, e(F), p-value, e(p), Rho, e(rho)) addtext(Ind. FE, Yes, Country FE, YES) dec(4) title(Estimations with OLS-FE Panel Data) addnote(This is for rubustness comparison)
-
 
 ***What is p-value in Stata?
 **The p-value is a matter of convenience for us. STATA automatically takes into 
 **account the number of degrees of freedom and tells us at what level our coefficient is significant. 
 **If it is significant at the 95% level, then we have P < 0.05. If it is significant at the 0.01 level, then P < 0.01.
-
-
-
 
 
 
@@ -611,7 +283,6 @@ outreg2 using outputFE1.xls, append label ctitle(EM1) addstat(Sigma_u, e(sigma_u
 
 
 
-***** For some reason I obtain here an error message statting "invalid syntax" with when trying to compute the AR-2 value in outreg2 command. Please, check this out ****
 ***Two-step system GMM***
 ***** DEPENDENT VARIABLE ABS_DA(Absolute Discretionary Accruals) Using Modified Jones Model 1995***
 . xtabond2 ABS_DA l.ABS_DA CGI ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI Individualismindex powerdistanceindex i.c i.gicsin, gmm(L2.(ABS_DA), collapse) iv(CGI ROA_w2 TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom BoardSize1 lev1 size OverallScoreEconomicFreedomI Individualismindex powerdistanceindex i.c i.gicsin) robust twostep
