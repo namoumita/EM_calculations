@@ -3,8 +3,6 @@
 ***Import Command Nafisa***
 . import excel "C:\Users\HP\Downloads\DB Europe 3.4.2021.xlsx", sheet("STATA DB") firstrow
 
-***Import Command Paolo***
-***import excel "C:\Users\psaon\Archivos de Trabajo\Trabajos de Investigación\Trabajos con Azad\Nafisa\Review2\DB Europe 3.4.2021.xlsx", sheet("STATA DB") firstrow
 
 *** SET PANEL DATA ***
 . xtset Iden Year
