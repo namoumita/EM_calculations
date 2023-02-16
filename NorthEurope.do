@@ -14,13 +14,8 @@
 . drop if CountryofHeadquarters=="Bulgaria"
 . drop if CountryofHeadquarters=="Croatia"
 . drop if CountryofHeadquarters=="Czech Republic"
-. drop if CountryofHeadquarters=="France"
 . drop if CountryofHeadquarters=="Hungary"
-. drop if CountryofHeadquarters=="Italy"
-. drop if CountryofHeadquarters=="Portugal"
 . drop if CountryofHeadquarters=="Slovenia"
-. drop if CountryofHeadquarters=="Spain"
-. drop if CountryofHeadquarters=="Switzerland"
 
 
 *** REMOVAL FROM THE DATA SET FINANCIAL COMPANIES LIKE BANKS (WE JUST WANT TO WORK WITH NON-FINANCIAL FIRMS)***
@@ -154,7 +149,7 @@
 . factor VA PS GE RQ RL CC, pcf
 . rotate
 
-*** Since two factors have Eigenvalue>1 you have to predict two, not one. Hence, I modified your predict command and the subsequents for two factors ***
+*** Since two factors have Eigenvalue>1 you have to predict two, not one.
 . predict factorcgi1 factorcgi2 
 . summarize factorcgi1 factorcgi2
 . correlate VA PS GE RQ RL CC factorcgi1 factorcgi2
@@ -165,8 +160,6 @@
 
 
 ***DESCRIPTIVE STATISICS***
-. summarize ABS_DA EM2_w2 CGI TAT BoardSize1 ROA_w2 lev1 size 
-. asdoc summarize ABS_DA EM2_w2 CGI TAT BoardSize1 ROA_w2 lev1 size, replace label tzok dec(3) save(Statistics CGI)
 
 . tabstat ABS_DA, statistics(N mean median sd min max) by ( CountryofHeadquarters ) format(%9.2fc)
 . bysort CountryofHeadquarters: asdoc tabstat ABS_DA, stat(N mean median sd p25 p75) append label tzok dec(3) save(Statistics CGI)
@@ -182,7 +175,7 @@
 . pwcorr ABS_DA EM2_w2 CGI TAT ROA_w2 JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom OverallScoreEconomicFreedomI BoardSize1 lev1 size, sig star(0.01) 
 . asdoc pwcorr ABS_DA EM2_w2 CGI TAT ROA_w2 JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom OverallScoreEconomicFreedomI BoardSize1 lev1 size, sig star(0.01) append label tzok  dec(3) save(Statistics CGI)
 
-. tabstat ABS_DA CGI TAT ROA_w2 JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom OverallScoreEconomicFreedomI BoardSize1 lev1 size, stat(N mean sd q) format(%9.2fc) column(stat)
+. tabstat ABS_DA CGI TAT ROA_w2 JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom OverallScoreEconomicFreedomI BoardSize1 lev1 size, stat(N mean sd p25 p50 p75) format(%9.2fc) column(stat)
 . asdoc tabstat ABS_DA CGI TAT ROA_w2 JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom OverallScoreEconomicFreedomI BoardSize1 lev1 size, stat(N mean sd p25 p50 p75) format(%9.2fc) column(stat) append label tzok  dec(3) save(Statistics CGI) 
 
 
@@ -199,13 +192,13 @@
 
 ***MEASUREMENT ERROR***
 . xtreg ABS_DA CGI Individualismindex powerdistanceindex TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom OverallScoreEconomicFreedomI BoardSize1 ROA_w2 lev1 size, fe
-**. predict CooksD, cooksd
-**. xtreg ABS_DA  CGI Individualismindex powerdistanceindex TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom OverallScoreEconomicFreedomI BoardSize1 ROA_w2 lev1 size if CooksD<1, fe
+. predict CooksD, cooksd
+. xtreg ABS_DA  CGI Individualismindex powerdistanceindex TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom OverallScoreEconomicFreedomI BoardSize1 ROA_w2 lev1 size if CooksD<1, fe
 
 ***Heteroskedasticity***
 . regress ABS_DA CGI Individualismindex powerdistanceindex TAT JudicialEffectiveness TaxBurden TradeFreedom MonetaryFreedom OverallScoreEconomicFreedomI BoardSize1 ROA_w2 lev1 size
 . hettest
-****higher ch(2) value = Heteroskedastic so the null hypothesis of homoskedasticity is rejected. 
+****higher ch(2) value = Heteroskedastic so the null hypothesis of homoskedasticity is rejected. Both of these codes work. 
 . estat imtest, white
 . whitetst
 
