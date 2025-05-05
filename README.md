@@ -9,7 +9,7 @@ The code shows how to manage for 6 indices and create aggregate index to help wi
 
 Apart from this the code demonstrates common descriptive statistics required to be presented in the paper therefore statistically describing the dataset at its best.
 The code also shows Ordinary Least Square Methods - Fixed Effects calculations for panel data analysis.
-After this I have also shown the codes for Feasible generalized least squares method- Fixed Effects as well as Two-Step System Generalised Method of Moments calculations.
+After this I have also shown the codes for Feasible generalized least squares method- Fixed Effects (FE) as well as Two-Step System Generalised Method of Moments (GMM) calculations.
 I have used these two for robustness check which further supported the results.
 
 Finally the NorthEurope file contains codes to push the outputs of the regressions in both MS Word and MS Excel. 
