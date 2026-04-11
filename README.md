@@ -1,3 +1,18 @@
+# Earnings Management Calculations — Panel Data Analysis in Stata
+
+Stata code supporting the published research paper: *"Country-level governance and earnings management: new evidence from North-European countries"* — International Journal of Work Innovation (2022).
+
+## Quick Summary
+- **Data:** North-European country panel dataset (2021)
+- **Methods:** OLS Fixed Effects, FGLS Fixed Effects, Two-Step System GMM
+- **Purpose:** Quantify earnings management using Jones (1995) and Kothari (2005) discretionary accruals models
+- **Output:** Regression results exported directly to MS Word and MS Excel
+
+[📄 Read the published paper](https://doi.org/10.1504/IJWI.2022.126856)
+
+---
+
+
 # EM_calculations
 
 This is the basic code that I initially drafted for my first journal paper titled, "Country level governance and earnings management: new evidence from North-European countries" which was published in International Journal of Work Innovation in 2022. 
